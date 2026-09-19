@@ -1,58 +1,128 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Edificios ERP | Backend API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+API REST para la administración de edificios y condominios. Este proyecto provee autenticación, autorización por roles y endpoints para la operación diaria de un edificio.
 
-## About Laravel
+> Proyecto personal con propósito educativo y de portafolio. El diseño busca servir como base para una solución comercial, con énfasis en seguridad, trazabilidad y crecimiento modular.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+**Backend:** Laravel 13 + PHP 8.3  
+**Frontend:** [edificios-erp](https://github.com/melek-eyzaguirre-dev/edificios-erp)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Capacidades de la API
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- Autenticación con Laravel Sanctum.
+- Autorización por roles mediante `spatie/laravel-permission`.
+- Administradoras, condominios y unidades.
+- Residentes, personal y turnos.
+- Visitas y reporte de visitas no autorizadas.
+- Reservas y espacios comunes.
+- Estacionamientos y ocupaciones.
+- Novedades, proveedores e inventario.
+- Asistencias, entradas, salidas y solicitudes de ausencia.
+- Gastos comunes, cargos, distribución y pagos.
+- Resúmenes para dashboard administrativo y residente.
+- Feedback de residentes.
 
-## Learning Laravel
+Las rutas protegidas requieren autenticación mediante Sanctum. La definición completa de endpoints está en `routes/api.php`.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Tecnologías
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- PHP 8.3+
+- Laravel 13
+- Laravel Sanctum
+- Spatie Laravel Permission
+- PHPUnit
+- SQLite para desarrollo inicial, con posibilidad de usar MySQL
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+## Instalación local
 
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+Requisitos: PHP 8.3 o superior, Composer, Node.js y una base de datos.
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+git clone https://github.com/melek-eyzaguirre-dev/edificios-api.git
+cd edificios-api
+composer install
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+En Windows PowerShell:
 
-## Contributing
+```powershell
+Copy-Item .env.example .env
+php artisan key:generate
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Configura la conexión de base de datos y el origen permitido para el frontend:
 
-## Code of Conduct
+```env
+APP_URL=http://edificios-api.test
+CORS_ALLOWED_ORIGINS=http://localhost:5173
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Ejecuta las migraciones:
 
-## Security Vulnerabilities
+```bash
+php artisan migrate
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Inicia la API:
 
-## License
+```bash
+php artisan serve
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Por defecto quedará disponible en `http://127.0.0.1:8000`. Si utilizas Laragon, puedes usar un dominio local como `http://edificios-api.test`.
+
+## Conectar el frontend
+
+En el frontend, crea `.env` a partir de `.env.example` y configura:
+
+```env
+VITE_API_URL=http://edificios-api.test/api
+```
+
+El frontend está en el repositorio [edificios-erp](https://github.com/melek-eyzaguirre-dev/edificios-erp).
+
+## Comandos útiles
+
+```bash
+php artisan migrate               # ejecuta migraciones
+php artisan migrate:fresh         # reinicia la base de datos local
+php artisan route:list             # muestra las rutas disponibles
+php artisan test                   # ejecuta pruebas
+vendor/bin/pint                   # revisa formato PHP
+```
+
+No ejecutes `migrate:fresh` en una base de datos con información importante: el comando elimina y recrea las tablas.
+
+## Organización del proyecto
+
+```text
+app/
+  Http/Controllers/  # endpoints y reglas de entrada
+  Models/            # entidades de dominio
+database/
+  migrations/        # estructura de la base de datos
+  seeders/           # datos iniciales
+routes/api.php       # contrato principal de la API
+tests/               # pruebas automatizadas
+```
+
+## Diseño del proyecto
+
+El sistema se está construyendo por módulos de negocio. La API mantiene separados los recursos de operación, seguridad, residentes y finanzas para facilitar el mantenimiento y la incorporación de nuevas capacidades.
+
+## Roadmap
+
+- Agregar documentación OpenAPI/Swagger.
+- Completar pruebas de autorización por rol.
+- Incorporar auditoría de cambios y bitácora de eventos.
+- Añadir notificaciones y trabajos en segundo plano.
+- Integrar pagos, reportes exportables y almacenamiento de documentos.
+- Preparar despliegue con configuración segura para producción.
+
+## Estado
+
+Proyecto en desarrollo. El contrato de la API puede cambiar mientras se completan los módulos y sus pruebas.
+
+## Licencia
+
+Este proyecto se publica como material de aprendizaje y portafolio. La licencia comercial y las condiciones de uso se definirán antes de ofrecerlo a terceros.
