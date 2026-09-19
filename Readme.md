@@ -1,126 +1,128 @@
-# Edificios API
+# Edificios ERP | Backend API
 
-Backend de un sistema de administración de edificios/condominios (estilo ERP), construido como API REST con Laravel. Diseñado desde el inicio con arquitectura **multi-tenant**, pensado para escalar a múltiples administradoras, condominios y eventualmente otros tipos de cliente (empresas de seguridad, conserjería externa).
+API REST para la administración de edificios y condominios. Este proyecto provee autenticación, autorización por roles y endpoints para la operación diaria de un edificio.
 
-## Estado del proyecto
+> Proyecto personal con propósito educativo y de portafolio. El diseño busca servir como base para una solución comercial, con énfasis en seguridad, trazabilidad y crecimiento modular.
 
-🚧 En desarrollo activo — MVP en construcción. Módulo de **reservas de espacios comunes** funcional de punta a punta (autenticación, validación de reglas de negocio, solapamiento de horarios).
+**Backend:** Laravel 13 + PHP 8.3  
+**Frontend:** [edificios-erp](https://github.com/melek-eyzaguirre-dev/edificios-erp)
 
-## Stack
+## Capacidades de la API
 
-- **Backend:** Laravel 12, PHP 8.4
-- **Base de datos:** MySQL
-- **Autenticación:** Laravel Sanctum (tokens API)
-- **Entorno local:** Laragon
+- Autenticación con Laravel Sanctum.
+- Autorización por roles mediante `spatie/laravel-permission`.
+- Administradoras, condominios y unidades.
+- Residentes, personal y turnos.
+- Visitas y reporte de visitas no autorizadas.
+- Reservas y espacios comunes.
+- Estacionamientos y ocupaciones.
+- Novedades, proveedores e inventario.
+- Asistencias, entradas, salidas y solicitudes de ausencia.
+- Gastos comunes, cargos, distribución y pagos.
+- Resúmenes para dashboard administrativo y residente.
+- Feedback de residentes.
 
-## Arquitectura de datos
+Las rutas protegidas requieren autenticación mediante Sanctum. La definición completa de endpoints está en `routes/api.php`.
 
-Modelo multi-tenant jerárquico:
+## Tecnologías
 
-```
-Administradora
-  └── Condominio
-        ├── Unidad
-        │     ├── Residentes (N:N vía unidad_user)
-        │     ├── Visitas
-        │     ├── Reservas
-        │     └── Estacionamiento fijo
-        ├── Espacio común
-        │     └── Reservas
-        ├── Estacionamiento (fijo o de visita)
-        │     └── Ocupaciones
-        └── Staff / Conserjería (N:N vía condominio_user)
-```
+- PHP 8.3+
+- Laravel 13
+- Laravel Sanctum
+- Spatie Laravel Permission
+- PHPUnit
+- SQLite para desarrollo inicial, con posibilidad de usar MySQL
 
-Roles de usuario: `super_admin`, `admin_administradora`, `admin_condominio`, `conserje`, `residente`.
+## Instalación local
 
-## Módulos
-
-| Módulo | Estado |
-|---|---|
-| Autenticación (Sanctum) | ✅ Funcional |
-| Administradoras / Condominios / Unidades | ✅ Funcional |
-| Espacios comunes y reservas (con validación de solapamiento) | ✅ Funcional |
-| Visitas (con QR de autorización) | 🚧 Modelo de datos listo, endpoints pendientes |
-| Estacionamientos | 🚧 Modelo de datos listo, endpoints pendientes |
-| Gastos comunes / pagos | 📋 Planeado |
-| Control de asistencia (conserjes/guardias) | 📋 Planeado |
-| Panel de analytics | 📋 Planeado |
-
-## Instalación local (Laragon)
-
-### Requisitos
-- PHP 8.4+
-- Composer
-- MySQL (incluido en Laragon)
-
-### Pasos
+Requisitos: PHP 8.3 o superior, Composer, Node.js y una base de datos.
 
 ```bash
 git clone https://github.com/melek-eyzaguirre-dev/edificios-api.git
 cd edificios-api
 composer install
-cp .env.example .env
+```
+
+En Windows PowerShell:
+
+```powershell
+Copy-Item .env.example .env
 php artisan key:generate
 ```
 
-Configura tu `.env` con los datos de tu base de datos local:
+Configura la conexión de base de datos y el origen permitido para el frontend:
 
-```
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=edificios_db
-DB_USERNAME=root
-DB_PASSWORD=
+```env
+APP_URL=http://edificios-api.test
+CORS_ALLOWED_ORIGINS=http://localhost:5173
 ```
 
-Crea la base de datos y corre las migraciones:
+Ejecuta las migraciones:
 
 ```bash
 php artisan migrate
 ```
 
-Crea un usuario administrador de prueba:
+Inicia la API:
 
 ```bash
-php artisan db:seed --class=AdminUserSeeder
+php artisan serve
 ```
 
-Esto crea `admin@edificios.test` / `admin1234` (cámbialo en `database/seeders/AdminUserSeeder.php` antes de correrlo si quieres otras credenciales).
+Por defecto quedará disponible en `http://127.0.0.1:8000`. Si utilizas Laragon, puedes usar un dominio local como `http://edificios-api.test`.
 
-## Uso de la API
+## Conectar el frontend
 
-Todas las rutas (excepto `/api/login`) requieren un token Bearer obtenido en el login.
+En el frontend, crea `.env` a partir de `.env.example` y configura:
 
-### Autenticación
-
-```
-POST /api/login
-{ "email": "admin@edificios.test", "password": "admin1234" }
+```env
+VITE_API_URL=http://edificios-api.test/api
 ```
 
-### Flujo típico de datos
+El frontend está en el repositorio [edificios-erp](https://github.com/melek-eyzaguirre-dev/edificios-erp).
 
-```
-POST /api/administradoras   { "nombre": "..." }
-POST /api/condominios       { "administradora_id": 1, "nombre": "...", "direccion": "..." }
-POST /api/unidades          { "condominio_id": 1, "numero": "101" }
-POST /api/espacios-comunes  { "condominio_id": 1, "nombre": "Quincho", "duracion_maxima_horas": 4 }
-POST /api/reservas          { "espacio_comun_id": 1, "unidad_id": 1, "inicio": "...", "fin": "..." }
+## Comandos útiles
+
+```bash
+php artisan migrate               # ejecuta migraciones
+php artisan migrate:fresh         # reinicia la base de datos local
+php artisan route:list             # muestra las rutas disponibles
+php artisan test                   # ejecuta pruebas
+vendor/bin/pint                   # revisa formato PHP
 ```
 
-El endpoint de reservas valida automáticamente: espacio activo, solapamiento de horario, duración máxima y anticipación mínima.
+No ejecutes `migrate:fresh` en una base de datos con información importante: el comando elimina y recrea las tablas.
+
+## Organización del proyecto
+
+```text
+app/
+  Http/Controllers/  # endpoints y reglas de entrada
+  Models/            # entidades de dominio
+database/
+  migrations/        # estructura de la base de datos
+  seeders/           # datos iniciales
+routes/api.php       # contrato principal de la API
+tests/               # pruebas automatizadas
+```
+
+## Diseño del proyecto
+
+El sistema se está construyendo por módulos de negocio. La API mantiene separados los recursos de operación, seguridad, residentes y finanzas para facilitar el mantenimiento y la incorporación de nuevas capacidades.
 
 ## Roadmap
 
-- [ ] Endpoints de visitas (registro + validación de QR)
-- [ ] Endpoints de estacionamientos
-- [ ] Módulo de gastos comunes
-- [ ] Frontend web (repo separado: `edificios-web`)
-- [ ] App móvil para conserjería
-- [ ] Panel de analytics para administradores
+- Agregar documentación OpenAPI/Swagger.
+- Completar pruebas de autorización por rol.
+- Incorporar auditoría de cambios y bitácora de eventos.
+- Añadir notificaciones y trabajos en segundo plano.
+- Integrar pagos, reportes exportables y almacenamiento de documentos.
+- Preparar despliegue con configuración segura para producción.
+
+## Estado
+
+Proyecto en desarrollo. El contrato de la API puede cambiar mientras se completan los módulos y sus pruebas.
 
 ## Licencia
 
-Privado — todos los derechos reservados.
+Este proyecto se publica como material de aprendizaje y portafolio. La licencia comercial y las condiciones de uso se definirán antes de ofrecerlo a terceros.
