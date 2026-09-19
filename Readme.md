@@ -4,7 +4,7 @@ API REST para la administración de edificios y condominios. Este proyecto prove
 
 > Proyecto personal con propósito educativo y de portafolio. El diseño busca servir como base para una solución comercial, con énfasis en seguridad, trazabilidad y crecimiento modular.
 
-**Backend:** Laravel 13 + PHP 8.3  
+**Backend:** Laravel 13 + PHP 8.4  
 **Frontend:** [edificios-erp](https://github.com/melek-eyzaguirre-dev/edificios-erp)
 
 ## Capacidades de la API
@@ -26,7 +26,7 @@ Las rutas protegidas requieren autenticación mediante Sanctum. La definición c
 
 ## Tecnologías
 
-- PHP 8.3+
+- PHP 8.4.1+
 - Laravel 13
 - Laravel Sanctum
 - Spatie Laravel Permission
@@ -35,7 +35,7 @@ Las rutas protegidas requieren autenticación mediante Sanctum. La definición c
 
 ## Instalación local
 
-Requisitos: PHP 8.3 o superior, Composer, Node.js y una base de datos.
+Requisitos: PHP 8.4.1 o superior, Composer, Node.js y una base de datos.
 
 ```bash
 git clone https://github.com/melek-eyzaguirre-dev/edificios-api.git
@@ -57,6 +57,9 @@ APP_URL=http://edificios-api.test
 CORS_ALLOWED_ORIGINS=http://localhost:5173
 ```
 
+Con `php artisan serve`, usa `APP_URL=http://localhost:8000` y configura el
+frontend con `VITE_API_URL=http://localhost:8000/api`.
+
 Ejecuta las migraciones:
 
 ```bash
@@ -70,6 +73,18 @@ php artisan serve
 ```
 
 Por defecto quedará disponible en `http://127.0.0.1:8000`. Si utilizas Laragon, puedes usar un dominio local como `http://edificios-api.test`.
+
+## Inicio diario
+
+Las dependencias solo se instalan la primera vez. En cada nueva sesión abre
+una terminal y ejecuta:
+
+```powershell
+cd F:\laragon\www\edificios-api
+& "F:\laragon\bin\php\php-8.4.23-Win32-vs17-x64\php.exe" artisan serve
+```
+
+Deja esa terminal abierta. La API quedará en `http://localhost:8000`.
 
 ## Conectar el frontend
 
